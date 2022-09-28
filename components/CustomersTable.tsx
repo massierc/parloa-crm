@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { getCustomers, customersSelectors } from '../slices/customers';
-import { Fragment, useEffect } from 'react'
+import { getCustomers, deleteCustomer, customersSelectors } from '../slices/customers';
+import { Fragment, useCallback, useEffect } from 'react'
 import { AppDispatch, RootState } from '../store'
 import { Chip } from '../components/Chip'
 import { TableAction } from '../components/TableAction';
@@ -11,6 +11,12 @@ export const CustomersTable = () => {
   const dispatch = useDispatch<AppDispatch>()
   const loading = useSelector<RootState>(state => state.customers.loading)
   const customers = useSelector(customersSelectors.selectAll)
+
+  const onDelete = useCallback((id: string, company: string) => {
+    if (window.confirm(`Are you sure you want to delete ${company}?`)) {
+      dispatch(deleteCustomer(id))
+    }
+  }, [dispatch])
 
   useEffect(() => {
     dispatch(getCustomers())
@@ -47,7 +53,7 @@ export const CustomersTable = () => {
                     <div className="flex item-center justify-center">
                       <TableAction icon={<EyeIcon />} onClick={console.log} />
                       <TableAction icon={<PencilIcon />} onClick={console.log} />
-                      <TableAction icon={<TrashIcon />} onClick={console.log} />
+                      <TableAction icon={<TrashIcon />} onClick={() => onDelete(id, company)} />
                     </div>
                   </td>
                 </tr>

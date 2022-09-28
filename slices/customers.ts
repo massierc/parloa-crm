@@ -36,7 +36,11 @@ const customersAdapter = createEntityAdapter<Customer>({
 export const customersSlice = createSlice({
   name: 'customers',
   initialState: customersAdapter.getInitialState({ loading: false, error: undefined }),
-  reducers: {},
+  reducers: {
+    deleteCustomer: (state, action) => {
+      customersAdapter.removeOne(state, action.payload)
+    }
+  },
   extraReducers: {
     [getCustomers.pending.type]: (state) => {
       state.loading = true
@@ -52,6 +56,7 @@ export const customersSlice = createSlice({
   }
 })
 
+export const { deleteCustomer } = customersSlice.actions
 export const customersSelectors = customersAdapter.getSelectors((state: RootState) => state.customers)
 
 export const customersReducer = customersSlice.reducer
