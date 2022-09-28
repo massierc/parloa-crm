@@ -1,9 +1,20 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import { useDispatch, useSelector } from 'react-redux'
 import styles from '../styles/Home.module.css'
+import { selectCustomers, getCustomers } from '../slices/customers';
+import { useEffect } from 'react'
+import { AppDispatch } from '../store'
 
 const Home: NextPage = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  const { entities: customers, loading } = useSelector(selectCustomers)
+
+  useEffect(() => {
+    dispatch(getCustomers())
+  }, [dispatch])
+
   return (
     <div className={styles.container}>
       <Head>
