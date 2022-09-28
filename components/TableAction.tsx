@@ -7,7 +7,7 @@ type TableActionProps = {
 export const TableAction = ({ icon, onClick }: TableActionProps) => {
   return (
     <div
-      className="w-4 mr-2 transform hover:text-purple-500 hover:scale-110 hover:cursor-pointer"
+      className="w-4 mr-2 transform hover:text-blue-500 hover:scale-110 hover:cursor-pointer"
       onClick={onClick}>
       {icon}
     </div>
