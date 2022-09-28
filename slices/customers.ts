@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store';
 
 type Customer = {
@@ -8,6 +8,7 @@ type Customer = {
   industry: string,
   projects: Project[],
   about: string,
+  editing: boolean
 }
 
 type Project = {
@@ -28,52 +29,29 @@ export const getCustomers = createAsyncThunk(
   }
 );
 
-type CustomersState = {
-  entities: Customer[]
-  loading: 'idle' | 'pending'
-  currentRequestId: string | undefined
-  error: any
-}
-
-const initialState: CustomersState = {
-  entities: [],
-  loading: 'idle',
-  currentRequestId: undefined,
-  error: null,
-}
+const customersAdapter = createEntityAdapter<Customer>({
+  selectId: ({ id }) => id
+})
 
 export const customersSlice = createSlice({
   name: 'customers',
-  initialState,
+  initialState: customersAdapter.getInitialState({ loading: false, error: undefined }),
   reducers: {},
   extraReducers: {
-    [getCustomers.pending.type]: (state, action) => {
-      if (state.loading === 'idle') {
-        state.loading = 'pending'
-        state.currentRequestId = action.meta.requestId
-      }
+    [getCustomers.pending.type]: (state) => {
+      state.loading = true
     },
     [getCustomers.fulfilled.type]: (state, action) => {
-      const { requestId } = action.meta
-
-      if (state.loading === 'pending' && state.currentRequestId === requestId) {
-        state.loading = 'idle'
-        state.entities = action.payload
-        state.currentRequestId = undefined
-      }
+      state.loading = false
+      customersAdapter.setAll(state, action.payload)
     },
     [getCustomers.rejected.type]: (state, action) => {
-      const { requestId } = action.meta
-
-      if (state.loading === 'pending' && state.currentRequestId === requestId) {
-        state.loading = 'idle'
-        state.error = action.error
-        state.currentRequestId = undefined
-      }
+      state.loading = false
+      state.error = action.error
     },
   }
 })
 
-export const selectCustomers = (state: RootState) => state.customers
+export const customersSelectors = customersAdapter.getSelectors((state: RootState) => state.customers)
 
 export const customersReducer = customersSlice.reducer

@@ -1,14 +1,16 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { selectCustomers, getCustomers } from '../slices/customers';
+import { getCustomers, customersSelectors } from '../slices/customers';
 import { Fragment, useEffect } from 'react'
-import { AppDispatch } from '../store'
+import { AppDispatch, RootState } from '../store'
 import { Chip } from '../components/Chip'
 import { TableAction } from '../components/TableAction';
 import { EyeIcon, PencilIcon, TrashIcon } from '../components/Icons';
+import { Spinner } from './Spinner';
 
 export const CustomersTable = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const { entities: customers, loading } = useSelector(selectCustomers)
+  const loading = useSelector<RootState>(state => state.customers.loading)
+  const customers = useSelector(customersSelectors.selectAll)
 
   useEffect(() => {
     dispatch(getCustomers())
@@ -25,28 +27,35 @@ export const CustomersTable = () => {
         </tr>
       </thead>
       <tbody className="text-gray-600">
-        {customers.map(({ id, company, industry, isActive }) => {
-          return (
-            <Fragment key={id}>
-              <tr className="h-14 border border-gray-200 font-light">
-                <td className="px-6 text-left whitespace-nowrap">{company}</td>
-                <td className="px-6 text-center whitespace-nowrap">{industry}</td>
-                <td className="px-6 text-center whitespace-nowrap">
-                  <Chip emphasis={isActive ? 'success' : 'failure'}>{isActive ? 'active' : 'inactive'}</Chip>
-                </td>
-                <td className="py-3 px-6 text-center">
-                  <div className="flex item-center justify-center">
-                    <TableAction icon={<EyeIcon />} onClick={console.log} />
-                    <TableAction icon={<PencilIcon />} onClick={console.log} />
-                    <TableAction icon={<TrashIcon />} onClick={console.log} />
-                  </div>
-                </td>
-              </tr>
-              <tr className="h-3">
-              </tr>
-            </Fragment>
-          )
-        })}
+        {loading ? (
+          <tr className="relative h-32">
+            <div className="absolute inset-0 flex align-middle justify-center pt-6">
+              <Spinner />
+            </div>
+          </tr>
+        ) :
+          customers.map(({ id, company, industry, isActive }) => {
+            return (
+              <Fragment key={id}>
+                <tr className="h-14 border border-gray-200 font-light">
+                  <td className="px-6 text-left whitespace-nowrap">{company}</td>
+                  <td className="px-6 text-center whitespace-nowrap">{industry}</td>
+                  <td className="px-6 text-center whitespace-nowrap">
+                    <Chip emphasis={isActive ? 'success' : 'failure'}>{isActive ? 'active' : 'inactive'}</Chip>
+                  </td>
+                  <td className="py-3 px-6 text-center">
+                    <div className="flex item-center justify-center">
+                      <TableAction icon={<EyeIcon />} onClick={console.log} />
+                      <TableAction icon={<PencilIcon />} onClick={console.log} />
+                      <TableAction icon={<TrashIcon />} onClick={console.log} />
+                    </div>
+                  </td>
+                </tr>
+                <tr className="h-3">
+                </tr>
+              </Fragment>
+            )
+          })}
       </tbody>
     </table>
   )
