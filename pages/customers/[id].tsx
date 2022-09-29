@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import { AppDispatch, useAppSelector } from '../../store';
 import { Layout } from '../../components/Layout';
-import { customersSelectors, deleteCustomer, getCustomer } from '../../slices/customers';
+import { customersSelectors, deleteCustomer, getCustomer, updateCustomer } from '../../slices/customers';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
@@ -13,15 +13,17 @@ import { PencilIcon, TrashIcon } from '../../components/Icons';
 import { useState } from 'react';
 import { ProjectChip } from '../../components/ProjectChip';
 import { ProseBlock } from '../../components/ProseBlock';
+import { CustomerModal } from '../../components/CustomerModal';
 
 const Customer: NextPage = () => {
+  const [modalOpen, setModalOpen] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
   const router = useRouter()
   const id = router.query.id as string
-  const [deleting, setDeleting] = useState(false)
 
   const dispatch = useDispatch<AppDispatch>()
   const { loading, error } = useAppSelector(state => state.customers)
-
   const customer = useAppSelector((state) => {
     return customersSelectors.selectById(state, id)
   })
@@ -83,7 +85,7 @@ const Customer: NextPage = () => {
               <span className="font-light text-gray-400">{customer.industry}</span>
             </p>
             <div className="flex">
-              <ActionIcon icon={<PencilIcon />} onClick={console.log} size="md" />
+              <ActionIcon icon={<PencilIcon />} onClick={() => setModalOpen(true)} size="md" />
               {!customer.isActive && <ActionIcon icon={<TrashIcon />} onClick={onDelete} size="md" />}
             </div>
           </div>
@@ -102,6 +104,16 @@ const Customer: NextPage = () => {
           )}
         </div>
       </div>
+      <CustomerModal
+        open={modalOpen}
+        initialValues={{
+          company: customer.company,
+          industry: customer.industry
+        }}
+        onSubmit={(values) => dispatch(updateCustomer({ id: customer.id, ...values }))}
+        onDismiss={() => setModalOpen(false)}
+        submitText="Update"
+      />
     </Layout >
   )
 }

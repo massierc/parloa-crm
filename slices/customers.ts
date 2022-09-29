@@ -59,6 +59,10 @@ export const customersSlice = createSlice({
         ...action.payload
       })
     },
+    updateCustomer: (state, action) => {
+      const { id, ...changes } = action.payload
+      customersAdapter.updateOne(state, { id, changes })
+    },
     deleteCustomer: (state, action) => {
       customersAdapter.removeOne(state, action.payload)
     },
@@ -96,7 +100,7 @@ export const customersSlice = createSlice({
   }
 })
 
-export const { createCustomer, deleteCustomer } = customersSlice.actions
+export const { createCustomer, updateCustomer, deleteCustomer } = customersSlice.actions
 export const customersSelectors = customersAdapter.getSelectors((state: RootState) => state.customers)
 
 export const customersReducer = customersSlice.reducer

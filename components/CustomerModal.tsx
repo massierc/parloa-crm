@@ -1,40 +1,53 @@
-import { useEffect, useRef, useState } from "react"
-import { useDispatch } from "react-redux"
-import { AppDispatch } from "../store"
+import { useCallback, useEffect, useRef, useState } from "react"
+
 import { Modal } from "./Modal"
-import { createCustomer } from '../slices/customers';
+
+type CustomerForm = {
+  company: string
+  industry: string
+}
 
 type CustomerModalProps = {
   open: boolean
+  initialValues: CustomerForm
+  onSubmit: (values: CustomerForm) => void
   onDismiss: () => void
+  submitText: string
 }
 
-export const CustomerModal = ({ open, onDismiss }: CustomerModalProps) => {
-  const dispatch = useDispatch<AppDispatch>()
+export const CustomerModal = ({
+  open,
+  initialValues,
+  onSubmit,
+  onDismiss,
+  submitText
+}: CustomerModalProps) => {
   const inputElement = useRef<HTMLInputElement>(null);
 
-  const [company, setCompany] = useState('')
-  const [industry, setIndustry] = useState('')
+  const [company, setCompany] = useState(initialValues.company)
+  const [industry, setIndustry] = useState(initialValues.industry)
 
   const ready = company && industry
 
-  const onSubmit = () => {
+  const resetForm = useCallback(() => {
+    setCompany(initialValues.company)
+    setIndustry(initialValues.industry)
+  }, [initialValues])
+
+  const handleSubmit = () => {
     if (ready) {
-      dispatch(createCustomer({ company, industry }))
+      onSubmit({ company, industry })
       onDismiss()
     }
   }
 
   useEffect(() => {
-    setCompany('')
-    setIndustry('')
-  }, [open])
+    resetForm()
 
-  useEffect(() => {
     if (open && inputElement.current) {
       inputElement.current.focus();
     }
-  }, [open])
+  }, [resetForm, open])
 
   return (
     <Modal
@@ -77,11 +90,11 @@ export const CustomerModal = ({ open, onDismiss }: CustomerModalProps) => {
       </div>
       <div className="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
         <button
-          onClick={onSubmit}
+          onClick={handleSubmit}
           className={`${ready ? 'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300' : 'bg-gray-300'} text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center`}
           disabled={!ready}
         >
-          Create
+          {submitText}
         </button>
         <button
           onClick={onDismiss}
