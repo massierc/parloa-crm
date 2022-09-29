@@ -87,7 +87,7 @@ export const CustomerModal = ({
               setIndustry(e.target.value)
             }}
           >
-            <option selected>Choose an industry</option>
+            <option >Choose an industry</option>
             {industries.map(industry => {
               return <option key={industry} value={industry}>{industry}</option>
             })}

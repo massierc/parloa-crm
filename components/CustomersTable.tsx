@@ -5,10 +5,11 @@ import { AppDispatch, useAppSelector } from '../store'
 import { Chip } from '../components/Chip'
 import { Spinner } from './Spinner';
 import Link from 'next/link';
+import { Filters } from './Filters';
 
 export const CustomersTable = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const { loading, industries, filters } = useAppSelector(state => state.customers)
+  const { loading, filters } = useAppSelector(state => state.customers)
   const customers = useAppSelector(customersSelectors.selectAll)
 
   useEffect(() => {
@@ -17,24 +18,7 @@ export const CustomersTable = () => {
 
   return (
     <div className="bg-white py-3 md:py-5 px-4 md:px-8 xl:px-10 mb-10 rounded overflow-x-auto">
-      <div className="flex flex-wrap items-center pt-4">
-        {industries.map((industry) => {
-          return (
-            <button
-              key={industry}
-              className={`py-2 px-8 mr-2 mb-3 ${filters.includes(industry) ? 'bg-indigo-100 border-indigo-500 text-indigo-500' : 'border-white text-gray-400 bg-gray-100'} border-2 active:bg-indigo-200 font-semibold rounded-full hover:cursor-pointer`}
-              onClick={() => {
-                if (filters.includes(industry)) {
-                  dispatch(setFilters(filters.filter((filter) => filter !== industry)))
-                } else {
-                  dispatch(setFilters([...filters, industry]))
-                }
-              }}>
-              {industry}
-            </button>
-          )
-        })}
-      </div>
+      <Filters />
       <table className="min-w-max w-full table-auto">
         <thead>
           <tr className="h-20 text-gray-500 uppercase text-sm leading-normal">
