@@ -30,16 +30,23 @@ export const getCustomers = createAsyncThunk(
 );
 
 const customersAdapter = createEntityAdapter<Customer>({
-  selectId: ({ id }) => id
+  selectId: ({ id }) => id,
+  sortComparer: (a, b) => a.id.localeCompare(b.id)
 })
 
 export const customersSlice = createSlice({
   name: 'customers',
   initialState: customersAdapter.getInitialState({ loading: false, error: undefined }),
   reducers: {
+    createCustomer: (state, action) => {
+      customersAdapter.addOne(state, {
+        id: '_' + state.ids[0],
+        ...action.payload
+      })
+    },
     deleteCustomer: (state, action) => {
       customersAdapter.removeOne(state, action.payload)
-    }
+    },
   },
   extraReducers: {
     [getCustomers.pending.type]: (state) => {
@@ -56,7 +63,7 @@ export const customersSlice = createSlice({
   }
 })
 
-export const { deleteCustomer } = customersSlice.actions
+export const { createCustomer, deleteCustomer } = customersSlice.actions
 export const customersSelectors = customersAdapter.getSelectors((state: RootState) => state.customers)
 
 export const customersReducer = customersSlice.reducer

@@ -35,9 +35,9 @@ export const CustomersTable = () => {
       <tbody className="text-gray-600">
         {loading ? (
           <tr className="relative h-32">
-            <div className="absolute inset-0 flex align-middle justify-center pt-6">
+            <td className="absolute inset-0 flex align-middle justify-center pt-6">
               <Spinner />
-            </div>
+            </td>
           </tr>
         ) :
           customers.map(({ id, company, industry, isActive }) => {
