@@ -92,7 +92,7 @@ const Customer: NextPage = () => {
           <ProseBlock>
             {customer.about ?? "Add about section"}
           </ProseBlock>
-          {customer.projects && (
+          {customer.projects?.length ? (
             <section className="pt-8">
               <p className="text-gray-500 pb-4 text-sm md:text-md lg:text-lg font-bold uppercase tracking-tight">Projects</p>
               <div className="flex">
@@ -101,7 +101,7 @@ const Customer: NextPage = () => {
                 })}
               </div>
             </section>
-          )}
+          ) : null}
         </div>
       </div>
       <CustomerModal

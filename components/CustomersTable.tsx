@@ -13,7 +13,7 @@ export const CustomersTable = () => {
   const customers = useAppSelector(customersSelectors.selectAll)
 
   useEffect(() => {
-    if (customers.length === 0) dispatch(getCustomers())
+    if (customers.length <= 1) dispatch(getCustomers())
   }, [customers, dispatch])
 
   return (
