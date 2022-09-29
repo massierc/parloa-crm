@@ -4,12 +4,12 @@ import { AppDispatch } from "../store"
 import { Modal } from "./Modal"
 import { createCustomer } from '../slices/customers';
 
-type CreateCustomerModalProps = {
+type CustomerModalProps = {
   open: boolean
   onDismiss: () => void
 }
 
-export const CreateCustomerModal = ({ open, onDismiss }: CreateCustomerModalProps) => {
+export const CustomerModal = ({ open, onDismiss }: CustomerModalProps) => {
   const dispatch = useDispatch<AppDispatch>()
   const inputElement = useRef<HTMLInputElement>(null);
 
@@ -29,7 +29,6 @@ export const CreateCustomerModal = ({ open, onDismiss }: CreateCustomerModalProp
     setCompany('')
     setIndustry('')
   }, [open])
-
 
   useEffect(() => {
     if (open && inputElement.current) {

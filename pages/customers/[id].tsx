@@ -11,6 +11,8 @@ import { Spinner } from '../../components/Spinner';
 import { ActionIcon } from '../../components/ActionIcon';
 import { PencilIcon, TrashIcon } from '../../components/Icons';
 import { useState } from 'react';
+import { ProjectChip } from '../../components/ProjectChip';
+import { ProseBlock } from '../../components/ProseBlock';
 
 const Customer: NextPage = () => {
   const router = useRouter()
@@ -85,17 +87,15 @@ const Customer: NextPage = () => {
               {!customer.isActive && <ActionIcon icon={<TrashIcon />} onClick={onDelete} size="md" />}
             </div>
           </div>
-          <p className="text-gray-800 sm:text-md md:text-lg pt-4 md:pt-5 lg:pt-8 leading-relaxed max-w-prose">{customer.about ?? "Add about section"}</p>
+          <ProseBlock>
+            {customer.about ?? "Add about section"}
+          </ProseBlock>
           {customer.projects && (
             <section className="pt-8">
-              <p className="text-gray-500 pb-4 text-base md:text-lg lg:text-xl font-bold uppercase tracking-tight">Projects</p>
+              <p className="text-gray-500 pb-4 text-sm md:text-md lg:text-lg font-bold uppercase tracking-tight">Projects</p>
               <div className="flex">
                 {customer.projects.map(({ id, name }) => {
-                  return (
-                    <div key={id} className="px-6 py-2 mr-2 border-2 text-center text-sm md:text-base whitespace-nowrap align-baseline font-semibold border-purple-400 text-purple-400 hover:bg-purple-50 hover:cursor-pointer rounded-full">
-                      <span>{name}</span>
-                    </div>
-                  )
+                  return <ProjectChip key={id} name={name} />
                 })}
               </div>
             </section>

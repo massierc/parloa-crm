@@ -4,9 +4,8 @@ import { Button } from '../components/Button';
 import { Logo } from '../components/Logo';
 import { Layout } from '../components/Layout';
 import { Footer } from '../components/Footer';
-import { Modal } from '../components/Modal';
 import { useState } from 'react';
-import { CreateCustomerModal } from '../components/CreateCustomerModal';
+import { CustomerModal } from '../components/CustomerModal';
 
 const Home: NextPage = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -20,7 +19,7 @@ const Home: NextPage = () => {
       <div className="bg-white py-3 md:py-5 px-4 md:px-8 xl:px-10 mb-10 rounded overflow-x-auto">
         <CustomersTable />
       </div>
-      <CreateCustomerModal open={modalOpen} onDismiss={() => setModalOpen(false)} />
+      <CustomerModal open={modalOpen} onDismiss={() => setModalOpen(false)} />
       <Footer />
     </Layout>
   )
