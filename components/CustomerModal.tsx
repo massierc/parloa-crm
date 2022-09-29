@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import { useAppSelector } from "../store"
 
 import { Modal } from "./Modal"
 
@@ -26,6 +27,8 @@ export const CustomerModal = ({
 
   const [company, setCompany] = useState(initialValues.company)
   const [industry, setIndustry] = useState(initialValues.industry)
+
+  const { industries } = useAppSelector(state => state.customers)
 
   const ready = company && industry
 
@@ -76,16 +79,19 @@ export const CustomerModal = ({
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="industry">
             Industry
           </label>
-          <input
+          <select
             className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500"
             id="industry"
-            type="text"
-            placeholder="Paper"
             value={industry || ''}
             onChange={(e) => {
               setIndustry(e.target.value)
             }}
-          />
+          >
+            <option selected>Choose an industry</option>
+            {industries.map(industry => {
+              return <option key={industry} value={industry}>{industry}</option>
+            })}
+          </select>
         </div>
       </div>
       <div className="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200">
