@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useDispatch } from "react-redux"
 import { AppDispatch } from "../store"
 import { Modal } from "./Modal"
@@ -11,6 +11,7 @@ type CreateCustomerModalProps = {
 
 export const CreateCustomerModal = ({ open, onDismiss }: CreateCustomerModalProps) => {
   const dispatch = useDispatch<AppDispatch>()
+  const inputElement = useRef<HTMLInputElement>(null);
 
   const [company, setCompany] = useState('')
   const [industry, setIndustry] = useState('')
@@ -29,6 +30,13 @@ export const CreateCustomerModal = ({ open, onDismiss }: CreateCustomerModalProp
     setIndustry('')
   }, [open])
 
+
+  useEffect(() => {
+    if (open && inputElement.current) {
+      inputElement.current.focus();
+    }
+  }, [open])
+
   return (
     <Modal
       open={open}
@@ -41,7 +49,7 @@ export const CreateCustomerModal = ({ open, onDismiss }: CreateCustomerModalProp
             Company
           </label>
           <input
-            className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500"
             id="company"
             type="text"
             placeholder="Dunder Mifflin, Inc"
@@ -49,6 +57,7 @@ export const CreateCustomerModal = ({ open, onDismiss }: CreateCustomerModalProp
             onChange={(e) => {
               setCompany(e.target.value)
             }}
+            ref={inputElement}
           />
         </div>
         <div className="mb-4">
@@ -56,7 +65,7 @@ export const CreateCustomerModal = ({ open, onDismiss }: CreateCustomerModalProp
             Industry
           </label>
           <input
-            className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-blue-500"
             id="industry"
             type="text"
             placeholder="Paper"
