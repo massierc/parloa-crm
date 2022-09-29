@@ -10,10 +10,12 @@ import Link from 'next/link';
 import { Spinner } from '../../components/Spinner';
 import { ActionIcon } from '../../components/ActionIcon';
 import { PencilIcon, TrashIcon } from '../../components/Icons';
+import { useState } from 'react';
 
 const Customer: NextPage = () => {
   const router = useRouter()
   const id = router.query.id as string
+  const [deleting, setDeleting] = useState(false)
 
   const dispatch = useDispatch<AppDispatch>()
   const { loading, error } = useAppSelector(state => state.customers)
@@ -23,8 +25,12 @@ const Customer: NextPage = () => {
   })
 
   useEffect(() => {
-    if (id && !customer) dispatch(getCustomer(id))
-  }, [id, customer, dispatch])
+    if (id && !customer && !deleting) dispatch(getCustomer(id))
+  }, [id, customer, deleting, dispatch])
+
+  useEffect(() => {
+    if (deleting) router.push('/')
+  }, [deleting, router])
 
   if (error) {
     return (
@@ -51,7 +57,7 @@ const Customer: NextPage = () => {
   const onDelete = () => {
     if (window.confirm(`Are you sure you want to delete ${customer.company}?`)) {
       dispatch(deleteCustomer(customer.id))
-      router.push('/')
+      setDeleting(true)
     }
   }
 
