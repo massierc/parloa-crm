@@ -1,10 +1,8 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { getCustomers, deleteCustomer, customersSelectors } from '../slices/customers';
-import { Fragment, useCallback, useEffect } from 'react'
-import { AppDispatch, RootState, useAppSelector } from '../store'
+import { useDispatch } from 'react-redux'
+import { getCustomers, customersSelectors } from '../slices/customers';
+import { Fragment, useEffect } from 'react'
+import { AppDispatch, useAppSelector } from '../store'
 import { Chip } from '../components/Chip'
-import { TableAction } from '../components/TableAction';
-import { EyeIcon, PencilIcon, TrashIcon } from '../components/Icons';
 import { Spinner } from './Spinner';
 import Link from 'next/link';
 
@@ -13,15 +11,9 @@ export const CustomersTable = () => {
   const loading = useAppSelector(state => state.customers.loading)
   const customers = useAppSelector(customersSelectors.selectAll)
 
-  const onDelete = useCallback((id: string, company: string) => {
-    if (window.confirm(`Are you sure you want to delete ${company}?`)) {
-      dispatch(deleteCustomer(id))
-    }
-  }, [dispatch])
-
   useEffect(() => {
-    dispatch(getCustomers())
-  }, [dispatch])
+    if (customers.length === 0) dispatch(getCustomers())
+  }, [customers, dispatch])
 
   return (
     <table className="min-w-max w-full table-auto">
@@ -49,11 +41,6 @@ export const CustomersTable = () => {
                     <td className="px-6 text-center whitespace-nowrap">{industry}</td>
                     <td className="px-6 text-center whitespace-nowrap">
                       <Chip emphasis={isActive ? 'success' : 'failure'}>{isActive ? 'active' : 'inactive'}</Chip>
-                    </td>
-                    <td className="py-3 px-6 text-center">
-                      <div className="flex item-center justify-center">
-                        {!isActive && <TableAction icon={<TrashIcon />} onClick={() => onDelete(id, company)} />}
-                      </div>
                     </td>
                   </tr>
                 </Link>
