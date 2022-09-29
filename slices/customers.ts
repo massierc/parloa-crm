@@ -51,12 +51,20 @@ const customersAdapter = createEntityAdapter<Customer>({
   sortComparer: (a, b) => a.id.localeCompare(b.id)
 })
 
+type CustomersState = {
+  loading: boolean,
+  error: any,
+  industries: string[],
+  filters: string[],
+}
+
 export const customersSlice = createSlice({
   name: 'customers',
-  initialState: customersAdapter.getInitialState({
+  initialState: customersAdapter.getInitialState<CustomersState>({
     loading: false,
     error: undefined,
     industries: [],
+    filters: [],
   }),
   reducers: {
     createCustomer: (state, action) => {
@@ -72,6 +80,9 @@ export const customersSlice = createSlice({
     deleteCustomer: (state, action) => {
       customersAdapter.removeOne(state, action.payload)
     },
+    setFilters: (state, action) => {
+      state.filters = action.payload
+    },
   },
   extraReducers: {
     [getCustomers.pending.type]: (state) => {
@@ -81,7 +92,8 @@ export const customersSlice = createSlice({
     [getCustomers.fulfilled.type]: (state, action) => {
       state.loading = false
       state.error = undefined
-      state.industries = action.payload.meta.industries
+      state.industries = action.payload.meta.industries as string[]
+      state.filters = action.payload.meta.industries as string[]
       customersAdapter.setAll(state, action.payload.customers)
     },
     [getCustomers.rejected.type]: (state, action) => {
@@ -107,7 +119,7 @@ export const customersSlice = createSlice({
   }
 })
 
-export const { createCustomer, updateCustomer, deleteCustomer } = customersSlice.actions
+export const { createCustomer, updateCustomer, deleteCustomer, setFilters } = customersSlice.actions
 export const customersSelectors = customersAdapter.getSelectors((state: RootState) => state.customers)
 
 export const customersReducer = customersSlice.reducer

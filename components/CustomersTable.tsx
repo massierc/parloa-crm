@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { getCustomers, customersSelectors, Customer } from '../slices/customers';
+import { getCustomers, customersSelectors, setFilters } from '../slices/customers';
 import { Fragment, useEffect, useState } from 'react'
 import { AppDispatch, useAppSelector } from '../store'
 import { Chip } from '../components/Chip'
@@ -7,19 +7,13 @@ import { Spinner } from './Spinner';
 import Link from 'next/link';
 
 export const CustomersTable = () => {
-  const [filters, setFilters] = useState<string[]>(['all'])
-
   const dispatch = useDispatch<AppDispatch>()
-  const { loading, industries } = useAppSelector(state => state.customers)
+  const { loading, industries, filters } = useAppSelector(state => state.customers)
   const customers = useAppSelector(customersSelectors.selectAll)
 
   useEffect(() => {
     if (customers.length === 0) dispatch(getCustomers())
   }, [customers, dispatch])
-
-  useEffect(() => {
-    setFilters(['all', ...industries])
-  }, [industries])
 
   return (
     <div className="bg-white py-3 md:py-5 px-4 md:px-8 xl:px-10 mb-10 rounded overflow-x-auto">
@@ -30,12 +24,10 @@ export const CustomersTable = () => {
               key={industry}
               className={`py-2 px-8 mr-2 mb-3 ${filters.includes(industry) ? 'bg-indigo-100 border-indigo-500 text-indigo-500' : 'border-white text-gray-400 bg-gray-100'} border-2 active:bg-indigo-200 font-semibold rounded-full hover:cursor-pointer`}
               onClick={() => {
-                if (industry === 'all') {
-                  setFilters(['all', ...industries])
-                } else if (filters.includes(industry)) {
-                  setFilters(filters.filter((filter) => filter !== industry))
+                if (filters.includes(industry)) {
+                  dispatch(setFilters(filters.filter((filter) => filter !== industry)))
                 } else {
-                  setFilters([...filters, industry])
+                  dispatch(setFilters([...filters, industry]))
                 }
               }}>
               {industry}
