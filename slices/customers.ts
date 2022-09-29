@@ -3,11 +3,11 @@ import { RootState } from '../store';
 
 type Customer = {
   id: string,
-  isActive: boolean,
+  isActive?: boolean,
   company: string,
   industry: string,
-  projects: Project[],
-  about: string,
+  projects?: Project[],
+  about?: string,
   editing: boolean
 }
 
@@ -36,6 +36,10 @@ export const getCustomer = createAsyncThunk(
     const customers = await res.json() as Customer[]
     const customer = customers.find(c => id === c.id)
 
+    if (!customer) {
+      throw new Error(`Couldn't find any customer with id ${id}`)
+    }
+
     return customer
   }
 );
@@ -62,9 +66,11 @@ export const customersSlice = createSlice({
   extraReducers: {
     [getCustomers.pending.type]: (state) => {
       state.loading = true
+      state.error = undefined
     },
     [getCustomers.fulfilled.type]: (state, action) => {
       state.loading = false
+      state.error = undefined
       customersAdapter.setAll(state, action.payload)
     },
     [getCustomers.rejected.type]: (state, action) => {
@@ -73,10 +79,15 @@ export const customersSlice = createSlice({
     },
     [getCustomer.pending.type]: (state) => {
       state.loading = true
+      state.error = undefined
     },
     [getCustomer.fulfilled.type]: (state, action) => {
       state.loading = false
-      customersAdapter.setOne(state, action.payload)
+      state.error = undefined
+
+      if (action.payload) {
+        customersAdapter.setOne(state, action.payload)
+      }
     },
     [getCustomer.rejected.type]: (state, action) => {
       state.loading = false
