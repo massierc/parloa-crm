@@ -1,14 +1,13 @@
-import { createAsyncThunk, createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store';
 
-type Customer = {
+export type Customer = {
   id: string,
   isActive?: boolean,
   company: string,
   industry: string,
   projects?: Project[],
   about?: string,
-  editing: boolean
 }
 
 type Project = {
@@ -24,8 +23,11 @@ export const getCustomers = createAsyncThunk(
   async () => {
     const res = await fetch('https://parloafrontendchallenge.z6.web.core.windows.net/customers.json')
     const customers = await res.json()
+    const industries = (customers as Customer[])
+      .map(({ industry }) => industry)
+      .filter((value, index, self) => self.indexOf(value) === index)
 
-    return customers
+    return { customers, meta: { industries } }
   }
 );
 
@@ -51,7 +53,11 @@ const customersAdapter = createEntityAdapter<Customer>({
 
 export const customersSlice = createSlice({
   name: 'customers',
-  initialState: customersAdapter.getInitialState({ loading: false, error: undefined }),
+  initialState: customersAdapter.getInitialState({
+    loading: false,
+    error: undefined,
+    industries: [],
+  }),
   reducers: {
     createCustomer: (state, action) => {
       customersAdapter.addOne(state, {
@@ -75,7 +81,8 @@ export const customersSlice = createSlice({
     [getCustomers.fulfilled.type]: (state, action) => {
       state.loading = false
       state.error = undefined
-      customersAdapter.setAll(state, action.payload)
+      state.industries = action.payload.meta.industries
+      customersAdapter.setAll(state, action.payload.customers)
     },
     [getCustomers.rejected.type]: (state, action) => {
       state.loading = false

@@ -20,9 +20,7 @@ const Home: NextPage = () => {
         <Logo />
         <Button onClick={() => setModalOpen(true)}>Add Customer</Button>
       </div>
-      <div className="bg-white py-3 md:py-5 px-4 md:px-8 xl:px-10 mb-10 rounded overflow-x-auto">
-        <CustomersTable />
-      </div>
+      <CustomersTable />
       <CustomerModal
         open={modalOpen}
         initialValues={{ company: '', industry: '' }}
